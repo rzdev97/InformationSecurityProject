@@ -33,12 +33,12 @@
                         <!-- Navbar Right Side -->
                         <div class="navbar-nav">
                             {% if current_user.is_authenticated %}
-                                <a class="nav-item nav-link" href="{{ url_for('account') }}">Account</a>
+                                <a class="nav-item nav-link" href="{{ url_for('account', user_id=current_user.id) }}">Account</a>
                                 <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
 
-                                <form class="form-inline">
-                                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                                <form class="form-inline" method="POST">
+                                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="searched" pattern="[a-zA-Z]*">
+                                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit" value="Search" formaction="/search">Search</button>
                                 </form>
                             {% else %}
                                 <a class="nav-item nav-link" href="{{ url_for('login') }}">Login</a>

@@ -45,9 +45,9 @@
                     <small class="text-muted">on {{ post.date_posted.strftime('%d/%m/%Y') }}</small>
                 </div>
                 <h2>
-                    <a class="article-title" href="#">{{ post.title }}</a>
+                    {{ post.title }}
                     {% if post.author == current_user %}
-                        <a href="{{ url_for('delete_post', post_id=post.id)}}">
+                        <a href="{{ url_for('delete_post', post_id=post.id) }}">
                             <button type="button" class="btn btn-danger btn-sm m-1 btn float-right">Delete</button>
                         </a>
                     {% endif %}
@@ -60,11 +60,34 @@
                     </div>
                     <small class="">{{ answer.content }}
                         {% if answer.author == current_user %}
-                            <button type="button" class="btn btn-danger btn-sm m-1 btn float-right">Delete</button>
+                            <a href="{{ url_for('delete_answer', answer_id=answer.id) }}">
+                                <button type="button" class="btn btn-danger btn-sm m-1 btn float-right">Delete</button>
+                            </a>
                         {% endif %}
                     </small>
                 {% endfor %}
+                <form method="POST" action="{{ url_for('comment', post_id=post.id) }}">
+                    {{ answerForm.hidden_tag() }}
+                    <fieldset class="form-group">
+                        <div class="form-group">
+                            {% if answerForm.content.errors %}
+                                {{ answerForm.content(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.content.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ answerForm.content(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div>
+                    </fieldset>
+                    <div class="form-group">
+                        {{ answerForm.submit(class="btn btn-outline-info") }}
+                    </div>
+                </form>
             </div>
         </article>
     {% endfor %}
 {% endblock content %}
+
