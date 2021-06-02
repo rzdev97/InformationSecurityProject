@@ -21,6 +21,12 @@ pip install Flask-Bcrypt
 
 
 ## 02/06 Edit
-- Small fix of versions structures and order
+- Small fix of versions structure and order
 - Delete is possible in both versions but only for posts without answers (or with all precedent answers deleted) and for users that have not created any post (or all posts deleted). This feature is not fully implemented and may raise a server error in different cases.
-- 
+
+- Videos uploaded
+  - Standard Scenario = https://www.youtube.com/watch?v=bFAOHIJ1qPo
+  - SQL Injection and XSS Insecure Version = https://www.youtube.com/watch?v=R8swmwUyypE
+  - SQL Injection and XSS Secure Version = https://www.youtube.com/watch?v=wCKjdDNhgys
+
+
