@@ -18,3 +18,9 @@ pip install Flask-SQLAlchemy
 pip instal WTForms
 pip install Flask-Login
 pip install Flask-Bcrypt
+
+
+## 02/06 Edit
+- Small fix of versions structures and order
+- Delete is possible in both versions but only for posts without answers (or with all precedent answers deleted) and for users without posts (or with all precedent posts deleted).   A server error will raise otherwise.
+- 
