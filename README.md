@@ -28,5 +28,7 @@ pip install Flask-Bcrypt
   - Standard Scenario = https://www.youtube.com/watch?v=bFAOHIJ1qPo
   - SQL Injection and XSS Insecure Version = https://www.youtube.com/watch?v=R8swmwUyypE
   - SQL Injection and XSS Secure Version = https://www.youtube.com/watch?v=wCKjdDNhgys
+  
+  - XSRF Attack with Insecure Version - https://youtu.be/XFlTHH0dMYk
 
 
