@@ -83,7 +83,7 @@ def logout():
 @app.route('/delete_user/<int:user_id>')
 @login_required
 def delete_user(user_id):
-    if current_user == user_id:
+    if current_user.id == user_id:
         logout_user()
         db.session.delete(User.query.get(user_id))
         db.session.commit()
@@ -108,7 +108,7 @@ def comment(post_id):
 @login_required
 def delete_post(post_id):
     post = Post.query.get(post_id)
-    if current_user == post.user_id:
+    if current_user.id == post.user_id:
         db.session.delete(post)
         db.session.commit()
         flash("Post has been deleted.", 'success')
@@ -120,7 +120,7 @@ def delete_post(post_id):
 @login_required
 def delete_answer(answer_id):
     answer = Answer.query.get(answer_id)
-    if current_user == answer_id:
+    if current_user.id == answer.user_id:
         db.session.delete(answer)
         db.session.commit()
         flash("Answer has been deleted.", 'success')
