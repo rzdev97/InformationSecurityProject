@@ -3,7 +3,6 @@ from forum import app, db, bcrypt
 from forum.forms import RegistrationForm, LoginForm, QuestionForm, AnswerForm
 from forum.models import User, Post, Answer
 from flask_login import login_user, current_user, logout_user, login_required
-import sqlite3
 
 
 @app.route('/about')
@@ -43,8 +42,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        #if user and bcrypt.check_password_hash(user.password, form.password.data):
-        if user and (user.password == form.password.data):
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user)
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('home'))
@@ -59,8 +57,8 @@ def register():
         return redirect(url_for('home'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        #hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        db.session.add(User(username=form.username.data, email=form.email.data, password=form.password.data)) #password=hashed_password
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        db.session.add(User(username=form.username.data, email=form.email.data, password=hashed_password))
         db.session.commit()
         flash("Your account has been created! You are now able to log in", 'success')
         return redirect(url_for('login'))
@@ -70,12 +68,9 @@ def register():
 @app.route('/search', methods=['POST'])
 def search():
     searched = request.form['searched']
-    cursor = sqlite3.connect('forum/site.db').cursor()
-    cursor.executescript("SELECT * FROM post WHERE title LIKE '%" + searched + "%';")
-    posts = cursor.execute("SELECT * FROM post WHERE title LIKE '%" + searched + "%';").fetchall()
-    cursor.close()
+    posts = Post.query.filter(Post.title.contains(searched)).all()
     posts.reverse()
-    return render_template('search.html', searched=searched, posts=posts)
+    return render_template('search.html', posts=posts, searched=searched)
 
 
 @app.route('/logout')
@@ -88,10 +83,12 @@ def logout():
 @app.route('/delete_user/<int:user_id>')
 @login_required
 def delete_user(user_id):
-    logout_user()
-    db.session.delete(User.query.get(user_id))
-    db.session.commit()
-    flash("Your account has been deleted.", 'success')
+    if current_user == user_id:
+        logout_user()
+        db.session.delete(User.query.get(user_id))
+        db.session.commit()
+        flash("Your account has been deleted.", 'success')
+        return redirect(url_for('home'))
     return redirect(url_for('home'))
 
 
@@ -110,16 +107,22 @@ def comment(post_id):
 @app.route('/delete_post/<int:post_id>')
 @login_required
 def delete_post(post_id):
-    db.session.delete(Post.query.get(post_id))
-    db.session.commit()
-    flash("Post has been deleted.", 'success')
+    post = Post.query.get(post_id)
+    if current_user == post.user_id:
+        db.session.delete(post)
+        db.session.commit()
+        flash("Post has been deleted.", 'success')
+        return redirect(url_for('home'))
     return redirect(url_for('home'))
 
 
 @app.route('/delete_answer/<int:answer_id>')
 @login_required
 def delete_answer(answer_id):
-    db.session.delete(Answer.query.get(answer_id))
-    db.session.commit()
-    flash("Answer has been deleted.", 'success')
+    answer = Answer.query.get(answer_id)
+    if current_user == answer_id:
+        db.session.delete(answer)
+        db.session.commit()
+        flash("Answer has been deleted.", 'success')
+        return redirect(url_for('home'))
     return redirect(url_for('home'))
